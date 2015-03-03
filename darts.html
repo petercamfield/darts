@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+	  .cabinet {
+	    margin-left: auto;
+		margin-right: auto;		
+		width: 800px;
+	  }	  
+	  canvas {		
+		background-image: url("images/chalkboard.jpg");
+		float: left;
+		width: 400px;
+		height: 400px;
+	  }	  
+	  .door {
+		background-image: url("images/woodgrain.jpg");
+		width: 200px;	
+		height: 400px;
+		float: left;		
+	  }
+	 
+	  
+    </style>
+  </head>
+  <body>    
+	<div class="cabinet">
+		<div class="door"></div>
+		<canvas id="canvas" ></canvas>
+		<div class="door"></span>
+	</div> 
+	
+    <script>
+	
+	
+	var cabinet = {
+		width: 500.0		
+	};
+	
+	var dartboard = {
+	    measurementsFromCentre: { //Taken from http://www.darts501.com/Bristleboards.htm
+			bullseyeOutsideEdge: 6.35,		
+			twentyFiveOutsideEdge: 16.0,
+			trebleInsideEdge: 99.0,
+			trebleOutsideEdge: 107.0,
+			doubleInsideEdge: 162.0,
+			doubleOutsideEdge: 170.0,
+			width: 226.0		
+		},
+		centre: cabinet.width / 2.0
+	};	
+	
+	var circle = {
+		start: 0.0,
+		end: Math.PI * 2.0
+	};
+		
+	function getContext() {	
+		var canvas = document.getElementById('canvas');
+		canvas.width = 400;
+		canvas.height = 400;	
+		var context = canvas.getContext('2d');	
+		context.scale(canvas.width / cabinet.width, canvas.height / cabinet.width);
+		return context;
+	}	
+	
+	function drawWire(context) {
+		var startAngle = 0.0; 
+		var endAngle = Math.PI + Math.PI;
+		for (var measurement in dartboard.measurementsFromCentre) {
+			context.beginPath();
+			context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsFromCentre[measurement], circle.start, circle.end);      
+			context.strokeStyle = 'silver';	  
+			context.lineWidth = 1;
+			context.stroke();	  
+		}
+	}
+	
+	function drawBoard(context) {
+		context.save();
+		context.beginPath();
+		context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsFromCentre.width, circle.start, circle.end);
+		context.fillStyle = 'black';
+		context.shadowColor = '#555';
+		context.shadowBlur = 20;
+		context.shadowOffsetX = 5;
+		context.shadowOffsetY = 5;
+		context.fill();
+		context.restore();
+	}
+	
+	function drawBullseye(context) {
+		context.beginPath();
+		context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsFromCentre.bullseyeOutsideEdge, circle.start, circle.end);
+		context.fillStyle = 'red';		
+		context.fill();
+	}
+	
+	function drawTwentyFive(context) {
+		var avg = (dartboard.measurementsFromCentre.twentyFiveOutsideEdge - dartboard.measurementsFromCentre.bullseyeOutsideEdge) / 2;
+		context.beginPath();
+		context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsFromCentre.bullseyeOutsideEdge + avg, circle.start, circle.end);
+		context.lineWidth = dartboard.measurementsFromCentre.twentyFiveOutsideEdge - dartboard.measurementsFromCentre.bullseyeOutsideEdge;
+		context.strokeStyle = 'green';	  
+		context.stroke();	  		
+	}
+		
+	var context = getContext();	
+	drawBoard(context);
+	drawBullseye(context);
+	drawTwentyFive(context);
+	drawWire(context);
+		  
+    </script>
+  </body>
+</html>      
