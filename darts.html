@@ -42,16 +42,19 @@
 	};
 	
 	var dartboard = {
-	    measurementsFromCentre: { //Taken from http://www.darts501.com/Bristleboards.htm
-			bullseyeOutsideEdge: 6.35,		
-			twentyFiveOutsideEdge: 16.0,
-			trebleInsideEdge: 99.0,
+	    measurementsToWireFromCentre: { //Taken from http://www.darts501.com/Bristleboards.htm
+			bullseyeOutsideEdge: 7.15,	//6.35 + 1.6/2	
+			twentyFiveOutsideEdge: 16.8, //16 + 1.6/2
+			trebleInsideEdge: 97.4, //107 - 8 - 1.6
 			trebleOutsideEdge: 107.0,
-			doubleInsideEdge: 162.0,
+			doubleInsideEdge: 160.4, //170 - 8 - 1.6
 			doubleOutsideEdge: 170.0,
-			width: 226.0		
+			width: 225.5		
 		},
-		centre: cabinet.width / 2.0
+		centre: cabinet.width / 2.0,
+		wire: {
+			width: 1.6
+		}
 	};	
 	
 	var circle = {
@@ -71,11 +74,11 @@
 	function drawWire(context) {
 		var startAngle = 0.0; 
 		var endAngle = Math.PI + Math.PI;
-		for (var measurement in dartboard.measurementsFromCentre) {
+		for (var measurement in dartboard.measurementsToWireFromCentre) {
 			context.beginPath();
-			context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsFromCentre[measurement], circle.start, circle.end);      
+			context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsToWireFromCentre[measurement], circle.start, circle.end);      
 			context.strokeStyle = 'silver';	  
-			context.lineWidth = 1;
+			context.lineWidth = dartboard.wire.width;
 			context.stroke();	  
 		}
 	}
@@ -83,7 +86,7 @@
 	function drawBoard(context) {
 		context.save();
 		context.beginPath();
-		context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsFromCentre.width, circle.start, circle.end);
+		context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsToWireFromCentre.width, circle.start, circle.end);
 		context.fillStyle = 'black';
 		context.shadowColor = '#555';
 		context.shadowBlur = 20;
@@ -95,16 +98,16 @@
 	
 	function drawBullseye(context) {
 		context.beginPath();
-		context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsFromCentre.bullseyeOutsideEdge, circle.start, circle.end);
+		context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsToWireFromCentre.bullseyeOutsideEdge, circle.start, circle.end);
 		context.fillStyle = 'red';		
 		context.fill();
 	}
 	
 	function drawTwentyFive(context) {
-		var avg = (dartboard.measurementsFromCentre.twentyFiveOutsideEdge - dartboard.measurementsFromCentre.bullseyeOutsideEdge) / 2;
+		var avg = (dartboard.measurementsToWireFromCentre.twentyFiveOutsideEdge - dartboard.measurementsToWireFromCentre.bullseyeOutsideEdge) / 2;
 		context.beginPath();
-		context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsFromCentre.bullseyeOutsideEdge + avg, circle.start, circle.end);
-		context.lineWidth = dartboard.measurementsFromCentre.twentyFiveOutsideEdge - dartboard.measurementsFromCentre.bullseyeOutsideEdge;
+		context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsToWireFromCentre.bullseyeOutsideEdge + avg, circle.start, circle.end);
+		context.lineWidth = dartboard.measurementsToWireFromCentre.twentyFiveOutsideEdge - dartboard.measurementsToWireFromCentre.bullseyeOutsideEdge;
 		context.strokeStyle = 'green';	  
 		context.stroke();	  		
 	}
