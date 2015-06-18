@@ -72,18 +72,37 @@
             canvas.height = 400;
             var context = canvas.getContext('2d');
             context.scale(canvas.width / cabinet.width, canvas.height / cabinet.width);
+            context.font = "30px Georgia";
+            context.fillStyle = 'silver';
             return context;
         }
 
         function drawWire(context) {
             var startAngle = 0.0;
             var endAngle = Math.PI + Math.PI;
+            context.save();
             for (var measurement in dartboard.measurementsToWireFromCentre) {
                 context.beginPath();
                 context.arc(dartboard.centre, dartboard.centre, dartboard.measurementsToWireFromCentre[measurement], circle.start, circle.end);
                 context.strokeStyle = 'silver';
                 context.lineWidth = dartboard.wire.width;
                 context.stroke();
+            }
+            context.restore();
+            var angle = Math.PI / 20;
+            for (var segment in dartboard.numbers) {
+                context.save();
+                context.beginPath();
+                context.translate(dartboard.centre, dartboard.centre);
+                context.rotate(angle);
+                context.moveTo(dartboard.measurementsToWireFromCentre.twentyFiveOutsideEdge, 0);
+                context.lineTo(dartboard.measurementsToWireFromCentre.doubleOutsideEdge, 0);
+                context.strokeStyle = 'silver';
+                context.lineWidth = dartboard.wire.width;
+                context.stroke();
+                angle += Math.PI / 10;
+                context.restore();
+
             }
         }
 
@@ -181,19 +200,15 @@
         }
 
         function drawNumbers(context) {
-            context.font = "30px Georgia";
-            context.fillStyle = 'silver';
             var angle=0;
             dartboard.numbers.forEach(function (number) {
+                var w = context.measureText(number).width;
+                var xpos = Math.cos(angle) * (dartboard.measurementsToWireFromCentre.doubleOutsideEdge + 25) + dartboard.centre - (w/2);
+                var ypos = Math.sin(angle) * (dartboard.measurementsToWireFromCentre.doubleOutsideEdge + 25) + dartboard.centre + 7;
                 context.save();
-                var m = context.measureText(number.toString());
-                context.translate(dartboard.centre, dartboard.centre);
-                context.rotate(angle);
-                context.translate(dartboard.measurementsToWireFromCentre.doubleOutsideEdge, 0);
-                context.rotate(Math.PI / 2);
-                context.fillText(number.toString(), 0, -(m.width / 2)); //dartboard.centre + dartboard.measurementsToWireFromCentre.width - m.width -5, dartboard.centre+15);
+                context.beginPath();
+                context.fillText(number.toString(), xpos, ypos);
                 context.restore();
-
                 angle+= (Math.PI/10);
             });
 
@@ -212,8 +227,7 @@
         var context = getContext();
 
         function getOperations() {
-            return [drawBoard,
-                drawBullseye,
+            return [drawBoard, drawBullseye,
                 drawTwentyFive,
                 drawDoubleBackground,
                 drawTrebleBackground,
